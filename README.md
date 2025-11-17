@@ -19,7 +19,9 @@ This plugin allows you to use MongoDB as a data source in Grafana. It works by r
 - Table panel support for aggregated data
 - Auto-bucketing support with `$bucketAuto` and `$dateBucketCount`
 
----
+- **Grafana**: version 3.x.x or higher
+- **MongoDB**: version 3.4.x or higher
+- **Node.js**: version 6.10.0 or higher (for running the proxy server)
 
 ## Requirements
 
@@ -46,6 +48,8 @@ cp -r dist /usr/local/var/lib/grafana/plugins/mongodb-grafana
 sudo systemctl restart grafana-server  # Linux
 brew services restart grafana          # macOS
 ```
+# Local MongoDB
+mongodb://localhost:27017
 
 ### 2. Install and start the MongoDB proxy server
 
@@ -208,11 +212,26 @@ Fork maintained by [run-as-daemon.ru](https://run-as-daemon.ru)
 
 **Made with ❤️ by the MongoDB + Grafana community and [run-as-daemon.ru](https://run-as-daemon.ru)**
 
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
+---
 
+## License
 
+ISC License
 
+Original work by James Osgood  
+Fork maintained by [run-as-daemon.ru](https://run-as-daemon.ru)
 
+---
 
+## Links
 
+- [Original Repository](https://github.com/JamesOsgood/mongodb-grafana)
+- [Grafana Documentation](https://grafana.com/docs/)
+- [MongoDB Aggregation Pipeline](https://docs.mongodb.com/manual/core/aggregation-pipeline/)
+- [run-as-daemon Services](https://run-as-daemon.ru)
 
+---
+
+**Made with ❤️ by the MongoDB-Grafana community and [run-as-daemon.ru](https://run-as-daemon.ru)**
