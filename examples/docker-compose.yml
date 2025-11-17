@@ -27,12 +27,9 @@ services:
     restart: unless-stopped
     ports:
       - "3333:3333"
-    environment:
-      # MongoDB connection settings
-      MONGODB_URL: mongodb://admin:password123@mongodb:27017
-      MONGODB_DB: testdb
-      # Proxy server settings
-      PORT: 3333
+    # Note: MongoDB connection is configured in Grafana datasource settings,
+    # not via environment variables. The proxy receives connection details
+    # from Grafana with each request.
     depends_on:
       - mongodb
     networks:

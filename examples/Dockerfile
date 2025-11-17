@@ -22,10 +22,8 @@ WORKDIR /app
 
 # Copy built files from builder
 COPY --from=builder /app/dist/server ./server
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
-
-# Install only production dependencies
-RUN npm install --production
 
 WORKDIR /app/server
 

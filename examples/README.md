@@ -64,6 +64,8 @@ http://localhost:3000
 4. Configure:
    - **Name**: `MongoDB Test`
    - **URL**: `http://mongodb-proxy:3333`
+   - **MongoDB URL**: `mongodb://admin:password123@mongodb:27017`
+   - **MongoDB Database**: `testdb`
 5. Click **Save & Test**
 
 You should see a green "Data source is working" message.
@@ -254,9 +256,9 @@ You can customize the setup by editing the environment variables in `docker-comp
 - `MONGO_INITDB_DATABASE` - Initial database name (default: testdb)
 
 **MongoDB Proxy:**
-- `MONGODB_URL` - MongoDB connection string
-- `MONGODB_DB` - Database to query
-- `PORT` - Proxy server port (default: 3333)
+- The proxy does not use environment variables for MongoDB connection
+- MongoDB connection is configured in Grafana data source settings
+- Each request from Grafana includes the MongoDB connection details
 
 **Grafana:**
 - `GF_SECURITY_ADMIN_USER` - Grafana admin username (default: admin)
@@ -266,15 +268,11 @@ You can customize the setup by editing the environment variables in `docker-comp
 
 To connect to an external MongoDB instance instead of the containerized one:
 
-1. Edit `docker-compose.yml`
-2. Update the `MONGODB_URL` in the `mongodb-proxy` service:
-   ```yaml
-   environment:
-     MONGODB_URL: mongodb://your-mongodb-host:27017
-     MONGODB_DB: your-database
-   ```
-3. Comment out or remove the `mongodb` service if not needed
-4. Remove the `depends_on` in `mongodb-proxy`
+1. Keep the `mongodb-proxy` and `grafana` services running
+2. In Grafana data source configuration, update:
+   - **MongoDB URL**: Point to your external MongoDB instance
+   - Example: `mongodb://user:pass@external-host:27017`
+3. Ensure the proxy container can reach your MongoDB instance (network connectivity)
 
 ## Production Considerations
 
