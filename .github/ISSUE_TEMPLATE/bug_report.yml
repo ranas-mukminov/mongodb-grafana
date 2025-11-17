@@ -1,0 +1,153 @@
+name: Bug Report
+description: Report a bug or issue with the MongoDB Grafana datasource plugin
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us diagnose and fix the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Execute query '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: I expected...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Instead, I got...
+    validations:
+      required: true
+
+  - type: textarea
+    id: query
+    attributes:
+      label: MongoDB Query
+      description: If applicable, paste the MongoDB aggregation query that's causing the issue
+      placeholder: |
+        db.collection.aggregate([
+          { "$match": { ... } }
+        ])
+      render: javascript
+
+  - type: input
+    id: grafana-version
+    attributes:
+      label: Grafana Version
+      description: What version of Grafana are you using?
+      placeholder: e.g., 9.5.2, 10.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: mongodb-version
+    attributes:
+      label: MongoDB Version
+      description: What version of MongoDB are you using?
+      placeholder: e.g., 5.0.15, 6.0.4
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version
+      description: What version of the MongoDB Grafana plugin are you using?
+      placeholder: e.g., 0.8.1
+    validations:
+      required: true
+
+  - type: input
+    id: nodejs-version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js is running the proxy server?
+      placeholder: e.g., 16.20.0, 18.16.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment Method
+      description: How are you deploying the plugin and proxy?
+      options:
+        - Manual installation
+        - Docker Compose
+        - Kubernetes
+        - Other (please describe in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: What OS is the proxy server running on?
+      placeholder: e.g., Ubuntu 22.04, macOS 13.3, Windows 11
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Please paste any relevant log output (proxy server logs, Grafana logs, browser console)
+      placeholder: Paste logs here...
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here (network setup, security configuration, etc.)
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm you've done the following before submitting
+      options:
+        - label: I have searched existing issues to ensure this isn't a duplicate
+          required: true
+        - label: I have included all relevant version information
+          required: true
+        - label: I have provided steps to reproduce the issue
+          required: true
+        - label: I have checked the plugin and proxy logs for errors
+          required: true

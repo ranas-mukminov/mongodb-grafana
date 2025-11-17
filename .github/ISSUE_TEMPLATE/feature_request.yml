@@ -1,0 +1,132 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for the MongoDB Grafana datasource plugin
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible to help us understand your request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see
+      placeholder: I would like to be able to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: I've tried... but it doesn't work because...
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - New query capability
+        - Dashboard/visualization enhancement
+        - Proxy server improvement
+        - Performance optimization
+        - Documentation improvement
+        - Security enhancement
+        - Developer experience
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Nice to have
+        - Would significantly improve my workflow
+        - Critical for my use case
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Describe your specific use case for this feature
+      placeholder: |
+        I need this feature because...
+        It would help me to...
+        My workflow involves...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: If applicable, provide an example of how this feature would work
+      placeholder: |
+        For example, I would write a query like:
+        db.collection.aggregate([...])
+        
+        And it would produce...
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Mockups or Examples
+      description: If applicable, add mockups, screenshots, or examples from other tools
+
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: Compatibility
+      description: Should this feature maintain backward compatibility?
+      options:
+        - label: This feature should maintain backward compatibility
+        - label: This feature may require breaking changes (explain in additional context)
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to contribute this feature?
+      options:
+        - No, I'm just suggesting it
+        - Yes, I'm willing to submit a pull request
+        - Yes, but I need guidance on how to implement it
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, links, or references about the feature request here
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm you've done the following before submitting
+      options:
+        - label: I have searched existing issues and discussions to ensure this isn't a duplicate
+          required: true
+        - label: I have clearly described the problem and proposed solution
+          required: true
+        - label: I understand this is an open-source project with no guaranteed timelines
+          required: true
