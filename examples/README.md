@@ -1,306 +1,285 @@
-# Docker Compose Examples
+# MongoDB Grafana Plugin - Docker Examples
 
-This directory contains a complete Docker Compose setup that demonstrates the MongoDB Grafana datasource plugin in action.
+This directory contains a complete Docker Compose setup for quickly testing and developing with the MongoDB Grafana datasource plugin.
 
 ## What's Included
 
-The `docker-compose.yml` file sets up:
+The Docker Compose stack includes:
 
-1. **MongoDB** (mongo:5.0) - The database with sample time-series data
-2. **MongoDB Proxy** - Node.js proxy server that translates Grafana API to MongoDB queries
-3. **Grafana** (latest) - Grafana instance with the MongoDB datasource plugin pre-installed
-
-## Prerequisites
-
-- Docker (version 20.10 or higher)
-- Docker Compose (version 1.29 or higher)
+- **MongoDB 6.0** - Database with sample sensor data
+- **MongoDB Proxy** - Node.js proxy server that translates Grafana queries to MongoDB
+- **Grafana 10.2** - Pre-configured with the MongoDB datasource plugin
 
 ## Quick Start
 
-### 1. Build and Start the Stack
+### Prerequisites
 
-From this directory, run:
+- Docker Engine 20.10 or higher
+- Docker Compose v2.0 or higher
+- At least 2GB of free RAM
 
+### Starting the Stack
+
+1. Navigate to the examples directory:
+```bash
+cd examples
+```
+
+2. Start all services:
 ```bash
 docker-compose up -d
 ```
 
-This will:
-- Pull the required Docker images
-- Build the MongoDB proxy server
-- Start all services
-- Initialize MongoDB with sample data
-
-### 2. Verify Services are Running
-
+3. Wait for all services to be healthy (30-60 seconds):
 ```bash
 docker-compose ps
 ```
 
-You should see three services running:
-- `mongodb` on port 27017
-- `mongodb-proxy` on port 3333
-- `grafana` on port 3000
+You should see all services in "healthy" status.
 
-### 3. Access Grafana
+### Access the Services
 
-Open your web browser and navigate to:
+Once running, you can access:
 
-```
-http://localhost:3000
-```
-
-**Default credentials:**
-- Username: `admin`
-- Password: `admin`
-
-(You'll be prompted to change the password on first login)
-
-### 4. Configure the MongoDB Data Source
-
-1. In Grafana, go to **Configuration** → **Data Sources**
-2. Click **Add data source**
-3. Select **MongoDB** from the list
-4. Configure:
-   - **Name**: `MongoDB Test`
-   - **URL**: `http://mongodb-proxy:3333`
-   - **MongoDB URL**: `mongodb://admin:password123@mongodb:27017`
-   - **MongoDB Database**: `testdb`
-5. Click **Save & Test**
-
-You should see a green "Data source is working" message.
-
-### 5. Create Your First Dashboard
-
-#### Option A: Import Example Dashboard
-
-1. Go to **Create** → **Import**
-2. Upload one of the example JSON files from this directory:
-   - `RPI Mongo Bucket - Atlas CS.json`
-   - `RPI Mongo Bucket - Atlas Temp.json`
-   - `Sensor Value Counts - Atlas.json`
-
-#### Option B: Create a New Dashboard
-
-1. Go to **Create** → **Dashboard** → **Add new panel**
-2. Select **MongoDB Test** as the data source
-3. Enter this query:
-
-```javascript
-db.metrics.aggregate([
-  {
-    "$match": {
-      "ts": { "$gte": "$from", "$lte": "$to" },
-      "metric_name": "cpu_usage"
-    }
-  },
-  { "$sort": { "ts": 1 } },
-  {
-    "$project": {
-      "name": "$hostname",
-      "value": "$value",
-      "ts": "$ts",
-      "_id": 0
-    }
-  }
-])
-```
-
-4. Set the time range to "Last 1 hour"
-5. Click **Apply** and **Save**
-
-You should see a graph with CPU usage data for server-01 and server-02.
+- **Grafana UI**: http://localhost:3000
+  - Username: `admin`
+  - Password: `admin`
+  
+- **MongoDB Proxy**: http://localhost:3333
+  - Health check: http://localhost:3333/
+  
+- **MongoDB**: `localhost:27017`
+  - Admin user: `admin` / `password`
+  - Grafana user: `grafana_reader` / `grafana_password`
+  - Database: `testdb`
 
 ## Sample Data
 
-The MongoDB instance is pre-populated with sample metrics data:
+The MongoDB database is initialized with sample sensor data in the `testdb.sensor_data` collection:
 
-- **Collection**: `testdb.metrics`
-- **Time range**: Last 60 minutes
-- **Metrics**: CPU usage and memory usage
-- **Hosts**: server-01, server-02
-- **Data points**: ~180 documents (60 per metric/host combination)
-
-### Sample Document Structure
-
-```json
+```javascript
 {
-  "ts": ISODate("2024-01-01T12:00:00Z"),
-  "hostname": "server-01",
-  "metric_name": "cpu_usage",
-  "value": 42.5,
-  "tags": {
-    "datacenter": "dc1",
-    "environment": "production"
-  }
+  sensor_type: "temperature" | "humidity",
+  host_name: "demo-host-1",
+  sensor_value: <number>,
+  ts: <ISODate>
 }
 ```
 
-## Useful Commands
+## Testing the Data Source
 
-### View Logs
+### 1. Verify Data Source Configuration
 
+1. Log into Grafana at http://localhost:3000
+2. Go to **Configuration → Data Sources**
+3. You should see "MongoDB Demo" already configured
+4. Click on it and verify connection with **Save & Test**
+
+### 2. Create Your First Panel
+
+1. Create a new dashboard
+2. Add a new panel
+3. Select "MongoDB Demo" as the data source
+4. Use this sample query:
+
+```javascript
+db.sensor_data.aggregate([
+  { "$match": { 
+      "sensor_type": "temperature",
+      "ts": { "$gte": "$from", "$lte": "$to" } 
+  }},
+  { "$sort": { "ts": 1 }},
+  { "$project": {
+      "name": "$sensor_type",
+      "value": "$sensor_value",
+      "ts": "$ts",
+      "_id": 0
+  }}
+])
+```
+
+5. Set the time range to "Last 24 hours"
+6. You should see the temperature data plotted
+
+### 3. Import Example Dashboards
+
+The `examples/` directory also contains pre-built dashboard JSON files:
+
+- `RPI MongoDB - Atlas.json`
+- `RPI MongoDB Bucket - Atlas.json`
+- `Sensor Value Counts - Atlas.json`
+
+To import:
+1. Go to **Dashboards → Import**
+2. Upload the JSON file
+3. Select "MongoDB Demo" as the data source
+4. Click **Import**
+
+## Development Workflow
+
+### Making Changes to the Plugin
+
+If you're developing the plugin:
+
+1. Make changes to the plugin source code in `src/` or `server/`
+
+2. Rebuild the plugin:
 ```bash
-# All services
-docker-compose logs -f
+cd ..
+npm run build
+```
 
-# Specific service
+3. Restart the Grafana container to pick up changes:
+```bash
+cd examples
+docker-compose restart grafana
+```
+
+### Viewing Logs
+
+View logs for all services:
+```bash
+docker-compose logs -f
+```
+
+View logs for a specific service:
+```bash
 docker-compose logs -f mongodb-proxy
 docker-compose logs -f grafana
 docker-compose logs -f mongodb
 ```
 
-### Stop Services
+### Accessing MongoDB CLI
 
+To connect to MongoDB directly:
+```bash
+docker-compose exec mongodb mongosh testdb -u grafana_reader -p grafana_password
+```
+
+Example queries:
+```javascript
+// Show collections
+show collections
+
+// Count documents
+db.sensor_data.countDocuments()
+
+// Find recent data
+db.sensor_data.find().sort({ts: -1}).limit(5)
+
+// Test aggregation
+db.sensor_data.aggregate([
+  { $group: { _id: "$sensor_type", count: { $sum: 1 }}}
+])
+```
+
+## Stopping and Cleaning Up
+
+### Stop the stack (preserves data):
 ```bash
 docker-compose stop
 ```
 
-### Stop and Remove Everything
-
+### Stop and remove containers (preserves data):
 ```bash
 docker-compose down
+```
 
-# Also remove volumes (deletes all data)
+### Stop and remove everything including data volumes:
+```bash
 docker-compose down -v
-```
-
-### Restart a Service
-
-```bash
-docker-compose restart mongodb-proxy
-```
-
-### Access MongoDB Shell
-
-```bash
-docker-compose exec mongodb mongosh -u admin -p password123 --authenticationDatabase admin
-```
-
-Then in the MongoDB shell:
-```javascript
-use testdb
-db.metrics.find().limit(5)
-```
-
-### Rebuild the Proxy After Code Changes
-
-```bash
-docker-compose build mongodb-proxy
-docker-compose up -d mongodb-proxy
 ```
 
 ## Troubleshooting
 
-### Plugin Not Showing in Grafana
+### Grafana shows "Plugin not found"
 
-1. Check that the plugin directory is mounted correctly:
-   ```bash
-   docker-compose exec grafana ls -la /var/lib/grafana/plugins/
-   ```
+1. Check that the plugin is mounted correctly:
+```bash
+docker-compose exec grafana ls -la /var/lib/grafana/plugins/mongodb-grafana
+```
 
-2. Check Grafana logs for plugin loading errors:
-   ```bash
-   docker-compose logs grafana | grep -i plugin
-   ```
+2. Restart Grafana:
+```bash
+docker-compose restart grafana
+```
 
-### Proxy Connection Issues
+### MongoDB Proxy connection fails
 
-1. Verify the proxy is running:
-   ```bash
-   docker-compose ps mongodb-proxy
-   ```
+1. Check proxy logs:
+```bash
+docker-compose logs mongodb-proxy
+```
 
-2. Test the proxy endpoint:
-   ```bash
-   curl http://localhost:3333/
-   ```
+2. Verify MongoDB is accessible from the proxy:
+```bash
+docker-compose exec mongodb-proxy wget -O- http://mongodb:27017
+```
 
-3. Check proxy logs:
-   ```bash
-   docker-compose logs mongodb-proxy
-   ```
+### No data in dashboards
 
-### MongoDB Connection Issues
+1. Verify sample data was inserted:
+```bash
+docker-compose exec mongodb mongosh testdb -u grafana_reader -p grafana_password --eval "db.sensor_data.countDocuments()"
+```
 
-1. Verify MongoDB is running:
-   ```bash
-   docker-compose ps mongodb
-   ```
+2. Check the time range in Grafana - the sample data has fixed timestamps
 
-2. Test MongoDB connection from proxy:
-   ```bash
-   docker-compose exec mongodb-proxy nc -zv mongodb 27017
-   ```
+3. Adjust the time range or insert current data:
+```bash
+docker-compose exec mongodb mongosh testdb -u admin -p password --authenticationDatabase admin --eval "
+db.sensor_data.insertOne({
+  sensor_type: 'temperature',
+  host_name: 'demo-host-1',
+  sensor_value: 25.0,
+  ts: new Date()
+})
+"
+```
 
-### No Data in Graphs
+## Customization
 
-1. Verify sample data was loaded:
-   ```bash
-   docker-compose exec mongodb mongosh -u admin -p password123 --authenticationDatabase admin testdb --eval "db.metrics.countDocuments()"
-   ```
+### Using Your Own MongoDB
 
-2. Check the time range in Grafana (sample data is only for the last hour)
+To connect to an external MongoDB instance:
 
-3. Verify the query syntax matches the data structure
+1. Edit `provisioning/datasources/mongodb.yml`
+2. Update the `mongodbUrl` with your connection string
+3. Update the `mongodbDatabase` with your database name
+4. Restart the stack
 
-## Configuration
+### Changing Ports
 
-### Environment Variables
+Edit `docker-compose.yml` and modify the `ports` section for each service.
 
-You can customize the setup by editing the environment variables in `docker-compose.yml`:
+### Adding More Sample Data
 
-**MongoDB:**
-- `MONGO_INITDB_ROOT_USERNAME` - MongoDB admin username (default: admin)
-- `MONGO_INITDB_ROOT_PASSWORD` - MongoDB admin password (default: password123)
-- `MONGO_INITDB_DATABASE` - Initial database name (default: testdb)
-
-**MongoDB Proxy:**
-- The proxy does not use environment variables for MongoDB connection
-- MongoDB connection is configured in Grafana data source settings
-- Each request from Grafana includes the MongoDB connection details
-
-**Grafana:**
-- `GF_SECURITY_ADMIN_USER` - Grafana admin username (default: admin)
-- `GF_SECURITY_ADMIN_PASSWORD` - Grafana admin password (default: admin)
-
-### Using with Your Own MongoDB
-
-To connect to an external MongoDB instance instead of the containerized one:
-
-1. Keep the `mongodb-proxy` and `grafana` services running
-2. In Grafana data source configuration, update:
-   - **MongoDB URL**: Point to your external MongoDB instance
-   - Example: `mongodb://user:pass@external-host:27017`
-3. Ensure the proxy container can reach your MongoDB instance (network connectivity)
+Edit `init-mongo.js` to add more collections or data patterns.
 
 ## Production Considerations
 
-This setup is for **development and testing only**. For production:
+⚠️ **This setup is for development and testing only!**
 
-1. **Use strong passwords**: Change all default passwords
-2. **Enable authentication**: MongoDB should have authentication enabled
-3. **Use SSL/TLS**: Enable encryption for MongoDB connections
-4. **Resource limits**: Add resource limits to containers
-5. **Persistence**: Use named volumes or bind mounts for data
-6. **Networking**: Use proper network isolation and firewalls
-7. **Monitoring**: Add monitoring and alerting for all services
-8. **Backup**: Implement regular MongoDB backups
-9. **High availability**: Use MongoDB replica sets
-10. **Reverse proxy**: Use Nginx or Traefik in front of Grafana
+For production deployments:
 
-## Next Steps
+- Use strong passwords (not hardcoded in files)
+- Use Docker secrets or environment files for sensitive data
+- Enable MongoDB authentication and SSL/TLS
+- Use proper MongoDB replica sets or clusters
+- Configure Grafana for HTTPS
+- Set up proper monitoring and logging
+- Use persistent volumes with backup strategies
+- Limit resource usage with Docker resource constraints
+- Run the proxy behind a reverse proxy with authentication
 
-- Read the [main README](../README.md) for detailed usage instructions
-- Explore the [sample dashboards](.) to learn query patterns
-- Check the [proxy configuration](../server/config/) for advanced options
-- Visit [run-as-daemon.ru](https://run-as-daemon.ru) for professional support
+See the main [README.md](../README.md) for production deployment guidance.
 
-## Support
+## Getting Help
 
-For issues with this Docker setup:
-- Check the troubleshooting section above
-- Review container logs
-- Open an issue on GitHub
+- Check the main [README.md](../README.md)
+- Report issues: https://github.com/ranas-mukminov/mongodb-grafana/issues
+- Professional support: https://run-as-daemon.ru
 
-For production deployment assistance, contact [run-as-daemon.ru](https://run-as-daemon.ru)
+## License
+
+Same as parent project - ISC License

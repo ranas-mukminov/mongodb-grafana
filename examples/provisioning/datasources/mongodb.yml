@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+  - name: MongoDB Demo
+    type: grafana-mongodb-datasource
+    access: proxy
+    url: http://mongodb-proxy:3333
+    jsonData:
+      mongodbUrl: "mongodb://grafana_reader:grafana_password@mongodb:27017/testdb?authSource=testdb"
+      mongodbDatabase: "testdb"
+    isDefault: true
+    editable: true

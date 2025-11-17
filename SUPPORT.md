@@ -1,92 +1,114 @@
 # Support
 
-Thank you for using the MongoDB Grafana datasource plugin!
-
 ## Community Support
 
-### Questions and Discussions
+This is an open-source project maintained by the community and [run-as-daemon.ru](https://run-as-daemon.ru).
 
-For general questions, usage help, and community discussions:
+### Getting Help
 
-- **GitHub Discussions**: Use the [Discussions](../../discussions) tab for questions and community help
-- **GitHub Issues**: [Open an issue](../../issues/new/choose) for bug reports or feature requests
+**For questions, bugs, and feature requests:**
 
-### Before Asking for Help
+- 📖 First, check the [README.md](README.md) and [examples/README.md](examples/README.md) documentation
+- 🔍 Search [existing issues](https://github.com/ranas-mukminov/mongodb-grafana/issues) to see if your question has been answered
+- 💬 Open a [new issue](https://github.com/ranas-mukminov/mongodb-grafana/issues/new/choose) if you can't find an answer
 
-Please check these resources first:
+**Community channels:**
 
-1. Read the [README](../README.md) - comprehensive documentation and examples
-2. Check the [examples/](../examples/) directory for working configurations
-3. Search [existing issues](../../issues) to see if your question has been answered
-4. Review the [original project documentation](https://github.com/JamesOsgood/mongodb-grafana)
+- GitHub Issues for bug reports and feature requests
+- GitHub Discussions (if enabled) for general questions
 
-## Response Time
+### Important Notes
 
-This is an **open-source project maintained by volunteers**. While we do our best to respond to issues and questions:
-
-- ✅ We typically respond within a few days
-- ⚠️ There is **no guaranteed SLA or response time**
-- 🙏 Please be patient and respectful
+- ⏰ **No guaranteed SLA**: This is a community project. Responses depend on volunteer availability.
+- 🤝 **Best effort**: We'll try to help, but there's no guarantee of response time or resolution.
+- 📚 **Help us help you**: Provide detailed information (see issue templates) to get better assistance.
 
 ## Professional Support
 
-Need faster response times, guaranteed SLA, or custom development?
+Need guaranteed response times, priority support, or consulting services?
 
-### Priority Support Services
+### Commercial Support Options
 
-**run-as-daemon** offers professional support and consulting services:
+**[run-as-daemon.ru](https://run-as-daemon.ru)** offers professional SRE/DevOps services including:
 
-- ⚡ **Priority Support**: 24-48 hour response time
-- 🛠️ **Custom Development**: Feature implementation, integrations
-- 📚 **Training**: Team workshops on MongoDB + Grafana
-- 🏗️ **Architecture Consulting**: Design review and best practices
-- 🚀 **Production Deployment**: End-to-end setup and optimization
+- ✅ **Priority Support** - Guaranteed response times (4h-24h SLA)
+- ✅ **Bug Fixes & Patches** - Fast-track critical issues
+- ✅ **Custom Development** - Features tailored to your needs
+- ✅ **Consulting & Training** - Expert guidance for your team
+- ✅ **Implementation Services** - Full deployment and configuration
+- ✅ **Performance Optimization** - MongoDB and query tuning
+- ✅ **Production Support** - 24/7 monitoring and incident response
 
-**Website**: [run-as-daemon.ru](https://run-as-daemon.ru)  
-**Email**: support@run-as-daemon.ru
+### What's Included in Professional Support
 
-### What's Included in Paid Support
+**Standard Support Package:**
+- Email and chat support (business hours)
+- 24-hour response time SLA
+- Monthly support hours (8-40 hours)
+- Access to private knowledge base
+- Regular check-ins and reviews
 
-- Direct email/Slack channel access
-- Guaranteed response times (SLA)
-- Bug fix prioritization
-- Custom feature development
-- Production deployment assistance
-- Performance tuning and optimization
-- Training and documentation
+**Premium Support Package:**
+- 24/7 phone, email, and chat support
+- 4-hour response time SLA
+- Unlimited support hours
+- Dedicated support engineer
+- Proactive monitoring and optimization
+- Quarterly business reviews
 
-## Security Issues
+**Enterprise Support Package:**
+- Everything in Premium, plus:
+- Named technical account manager
+- Custom SLAs
+- On-site support options
+- Training and workshops
+- Architecture and design reviews
+- Emergency hotfix development
 
-**Do NOT open public issues for security vulnerabilities.**
+### Services Beyond Support
 
-Please see [SECURITY.md](SECURITY.md) for how to report security issues privately.
+- **Implementation**: Full setup and deployment of Grafana + MongoDB monitoring
+- **Migration**: Upgrade from older versions or migrate from other solutions
+- **Training**: On-site or remote training for your team
+- **Consulting**: Architecture design, best practices, optimization
+- **Custom Development**: New features, integrations, or modifications
+
+### Contact for Professional Support
+
+- 🌐 **Website**: [run-as-daemon.ru](https://run-as-daemon.ru)
+- 📧 **Email**: contact@run-as-daemon.ru
+- 💬 **Telegram**: @run_as_daemon
+- 📞 **Schedule a call**: [Book a consultation](https://run-as-daemon.ru/consultation)
+
+**Response times for professional support inquiries: 1-2 business days**
 
 ## Contributing
 
-Want to help improve the plugin? Contributions are welcome!
+Want to help improve this project? See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-See our contribution guidelines (coming soon) or simply:
+Your contributions help make this project better for everyone! 🎉
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a Pull Request
+## Sponsorship
 
-## Code of Conduct
+If you or your company benefits from this project, please consider:
 
-Be respectful and constructive. We're all here to learn and help each other.
+- ⭐ Starring the repository
+- 💝 Sponsoring via [GitHub Sponsors](https://github.com/sponsors/ranas-mukminov)
+- ☕ Supporting via [run-as-daemon.ru/support](https://run-as-daemon.ru/support)
 
-- Be kind and courteous
-- Respect different viewpoints and experiences
-- Accept constructive criticism gracefully
-- Focus on what's best for the community
+Sponsorships help cover:
+- Hosting and infrastructure costs
+- Development and maintenance time
+- Testing across different environments
+- Documentation improvements
+- Community support
 
-## License
+## Security Issues
 
-This project is licensed under the ISC License. See [LICENSE](../LICENSE) for details.
+For security-related issues, please see [SECURITY.md](SECURITY.md) and follow the responsible disclosure process.
 
 ---
 
-**Thank you for being part of the MongoDB-Grafana community!** ❤️
+**Thank you for using mongodb-grafana!** 🙏
 
-For professional services: [run-as-daemon.ru](https://run-as-daemon.ru)
+Maintained by the community and [run-as-daemon.ru](https://run-as-daemon.ru)

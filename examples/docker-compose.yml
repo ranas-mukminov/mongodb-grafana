@@ -3,60 +3,70 @@ version: '3.8'
 services:
   # MongoDB database
   mongodb:
-    image: mongo:5.0
-    container_name: mongodb
-    restart: unless-stopped
+    image: mongo:6.0
+    container_name: mongodb-grafana-demo
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: testdb
     volumes:
       - mongodb_data:/data/db
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     networks:
-      - mongodb-grafana-network
+      - grafana-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # MongoDB Grafana Proxy Server
+  # MongoDB Grafana Proxy
   mongodb-proxy:
     build:
       context: ..
-      dockerfile: examples/Dockerfile
+      dockerfile: examples/Dockerfile.proxy
     container_name: mongodb-proxy
-    restart: unless-stopped
     ports:
       - "3333:3333"
-    # Note: MongoDB connection is configured in Grafana datasource settings,
-    # not via environment variables. The proxy receives connection details
-    # from Grafana with each request.
+    environment:
+      - NODE_ENV=production
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     networks:
-      - mongodb-grafana-network
+      - grafana-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3333/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Grafana
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.2.0
     container_name: grafana
-    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      # Grafana admin credentials
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
-      # Allow loading unsigned plugins (for development)
-      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: grafana-mongodb-datasource
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=
     volumes:
-      # Mount the plugin directory
-      - ../dist:/var/lib/grafana/plugins/mongodb-grafana
-      # Persist Grafana data
       - grafana_data:/var/lib/grafana
+      - ../dist:/var/lib/grafana/plugins/mongodb-grafana:ro
+      - ./provisioning:/etc/grafana/provisioning:ro
     depends_on:
-      - mongodb-proxy
+      mongodb-proxy:
+        condition: service_healthy
     networks:
-      - mongodb-grafana-network
+      - grafana-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   mongodb_data:
@@ -65,5 +75,5 @@ volumes:
     driver: local
 
 networks:
-  mongodb-grafana-network:
+  grafana-network:
     driver: bridge

@@ -1,289 +1,216 @@
 # MongoDB datasource for Grafana (run-as-daemon fork)
 
-**A powerful Grafana plugin that enables MongoDB as a data source through a REST API proxy**
+**Production-ready MongoDB datasource plugin for Grafana with professional support**
 
 [English] | [Русский](README.ru.md)
 
-> This is a maintained fork of [JamesOsgood/mongodb-grafana](https://github.com/JamesOsgood/mongodb-grafana) with enhanced documentation, practical examples, and professional support from **run-as-daemon**.
+> This is a maintained fork of [JamesOsgood/mongodb-grafana](https://github.com/JamesOsgood/mongodb-grafana) with improvements, Russian documentation, and professional SRE/DevOps services from [run-as-daemon.ru](https://run-as-daemon.ru)
 
 ---
 
 ## What this plugin does
 
-This plugin allows you to use MongoDB as a data source in Grafana by providing an HTTP proxy server that translates Grafana's Data Source API calls into MongoDB aggregation pipeline queries. It enables you to visualize time-series data, metrics, and other MongoDB collections directly in Grafana dashboards.
+This plugin allows you to use MongoDB as a data source in Grafana. It works by running a Node.js HTTP proxy server that translates Grafana's data source API calls into MongoDB aggregation pipeline queries. This enables you to visualize MongoDB data directly in Grafana dashboards without writing custom code.
 
 **Key capabilities:**
-- Execute MongoDB aggregation pipelines from Grafana queries
-- Support for template variables (`$from`, `$to`, custom variables)
-- Compatible with Graph, Table, and other Grafana panel types
-- Time-series data visualization with automatic bucketing support
-
----
-
-## Requirements
+- Query MongoDB collections using aggregation pipelines
+- Time-series visualizations with automatic date range macros (`$from`, `$to`)
+- Template variables for dynamic dashboards
+- Table panel support for aggregated data
+- Auto-bucketing support with `$bucketAuto` and `$dateBucketCount`
 
 - **Grafana**: version 3.x.x or higher
 - **MongoDB**: version 3.4.x or higher
 - **Node.js**: version 6.10.0 or higher (for running the proxy server)
 
+## Requirements
+
+- **Grafana**: >= 3.x.x
+- **MongoDB**: >= 3.4.x (aggregation pipeline support required)
+- **Node.js**: >= 6.10.0 (for the proxy server)
+
 ---
 
 ## Installation
 
-### Step 1: Install the Grafana Plugin
+### 1. Install the Grafana plugin
 
-1. Copy the entire `mongodb-grafana` directory into your Grafana plugins directory:
-   ```bash
-   # Default plugin directory locations:
-   # Linux: /var/lib/grafana/plugins
-   # macOS (Homebrew): /usr/local/var/lib/grafana/plugins
-   # Docker: /var/lib/grafana/plugins
-   
-   cp -r mongodb-grafana /var/lib/grafana/plugins/
-   ```
+Copy the plugin directory into your Grafana plugins folder:
 
-2. Restart Grafana:
-   ```bash
-   # Linux (systemd)
-   sudo systemctl restart grafana-server
-   
-   # macOS (Homebrew)
-   brew services restart grafana
-   
-   # Docker
-   docker restart grafana
-   ```
+```bash
+# Default Grafana plugins directory
+cp -r dist /var/lib/grafana/plugins/mongodb-grafana
 
-### Step 2: Install and Start the MongoDB Proxy Server
+# Homebrew installation (macOS)
+cp -r dist /usr/local/var/lib/grafana/plugins/mongodb-grafana
 
-1. Navigate to the plugin directory:
-   ```bash
-   cd /var/lib/grafana/plugins/mongodb-grafana
-   ```
+# Restart Grafana
+sudo systemctl restart grafana-server  # Linux
+brew services restart grafana          # macOS
+```
+# Local MongoDB
+mongodb://localhost:27017
 
-2. Install Node.js dependencies:
-   ```bash
-   npm install
-   ```
+### 2. Install and start the MongoDB proxy server
 
-3. Build the plugin (if needed):
-   ```bash
-   npm run build
-   ```
+The proxy server runs separately from Grafana and handles the MongoDB connections:
 
-4. Start the proxy server:
-   ```bash
-   npm run server
-   ```
+```bash
+# Install dependencies
+npm install
 
-   By default, the proxy server listens on `http://localhost:3333`
+# Build the plugin
+npm run build
 
-**Note**: For production deployments, consider running the proxy server as a system service (see examples below).
+# Start the proxy server (default port 3333)
+npm run server
+```
+
+The server will listen on `http://localhost:3333` by default.
 
 ---
 
 ## Quick Start with Docker
 
-The easiest way to try the plugin is using Docker Compose. This example sets up a complete stack with Grafana, MongoDB, and the proxy server.
-
-See the [`examples/docker-compose.yml`](examples/docker-compose.yml) file and [`examples/README.md`](examples/README.md) for a complete working example.
-
-**Quick start:**
+For a quick demo or development setup, use Docker Compose:
 
 ```bash
 cd examples
 docker-compose up -d
 ```
 
-Then open `http://localhost:3000` (admin/admin) and add a MongoDB data source pointing to `http://mongodb-proxy:3333`.
+This starts:
+- Grafana on http://localhost:3000 (admin/admin)
+- MongoDB proxy on http://localhost:3333
+- MongoDB instance for testing
+
+See [examples/README.md](examples/README.md) for detailed instructions.
 
 ---
 
 ## Basic Usage
 
-### Configuring the Data Source in Grafana
+### Configure the data source in Grafana
 
-1. Navigate to **Configuration** → **Data Sources** → **Add data source**
-2. Select **MongoDB** from the list
-3. Configure the connection:
-   - **HTTP URL**: `http://localhost:3333` (or your proxy server address)
-   - Click **Save & Test**
-
-4. In the proxy server's configuration (or via environment variables), set:
-   - **MongoDB URL**: Your MongoDB connection string
+1. In Grafana, go to **Configuration → Data Sources**
+2. Click **Add data source**
+3. Select **MongoDB**
+4. Configure:
+   - **Name**: Choose a descriptive name
+   - **URL**: `http://localhost:3333` (the proxy server)
+   - **MongoDB URL**: Your MongoDB connection string  
+     Example: `mongodb://user:pass@host:27017/database?authSource=admin`
    - **MongoDB Database**: The database name to query
+5. Click **Save & Test**
 
-**Example MongoDB connection strings:**
-```
-# Local MongoDB
-mongodb://localhost:27017
+### Write your first query
 
-# MongoDB Atlas (with replica set)
-mongodb://username:password@cluster0-shard-00-00.mongodb.net:27017,cluster0-shard-00-01.mongodb.net:27017/dbname?ssl=true&replicaSet=cluster0-shard-0&authSource=admin
-
-# MongoDB with authentication
-mongodb://user:password@localhost:27017/database
-```
-
-### Writing Queries
-
-MongoDB queries in Grafana are written as aggregation pipelines. The plugin provides special macros:
-
-- `$from` - Replaced with the start time of the dashboard's time range (BSON date)
-- `$to` - Replaced with the end time of the dashboard's time range (BSON date)
-- `$dateBucketCount` - Number of buckets for the current panel width/time range
-- Custom template variables (e.g., `$hostname`, `$sensor_type`)
-
-**Example query for a time-series graph:**
+In a dashboard panel, use MongoDB aggregation syntax:
 
 ```javascript
-db.metrics.aggregate([
-  {
-    "$match": {
-      "ts": { "$gte": "$from", "$lte": "$to" },
-      "hostname": "$hostname"
-    }
-  },
+db.collection_name.aggregate([
+  { "$match": { "ts": { "$gte": "$from", "$lte": "$to" } } },
   { "$sort": { "ts": 1 } },
-  {
-    "$project": {
-      "name": "cpu_usage",
-      "value": "$cpu_percent",
-      "ts": "$ts",
-      "_id": 0
-    }
-  }
+  { "$project": { 
+      "name": "series_name",
+      "value": "$field_name",
+      "ts": "$timestamp_field",
+      "_id": 0 
+  }}
 ])
 ```
 
-**Required fields in query results:**
-- `name` - Series name (string, shown in legend)
-- `value` - Metric value (number)
-- `ts` - Timestamp (BSON date)
+**Required fields in output:**
+- `name` - Series name (displayed in legend)
+- `value` - Numeric value for the data point
+- `ts` - Timestamp as a BSON date
 
-**Example with automatic bucketing:**
+**Macros:**
+- `$from`, `$to` - Automatically replaced with dashboard time range (as BSON dates)
+- `$dateBucketCount` - Number of buckets for time-series aggregation
+- Template variables like `$variableName` are substituted from Grafana variables
 
-```javascript
-db.metrics.aggregate([
-  {
-    "$match": {
-      "ts": { "$gte": "$from", "$lt": "$to" }
-    }
-  },
-  {
-    "$bucketAuto": {
-      "groupBy": "$ts",
-      "buckets": "$dateBucketCount",
-      "output": {
-        "avgValue": { "$avg": "$value" }
-      }
-    }
-  },
-  {
-    "$project": {
-      "name": "average",
-      "value": "$avgValue",
-      "ts": "$_id.min",
-      "_id": 0
-    }
-  }
-])
-```
+### Sample dashboards
 
-### Sample Dashboards
-
-Import example dashboards from the [`examples/`](examples/) directory:
-
-1. **RPI Mongo Bucket - Atlas CS.json** - Temperature sensor data with bucketing
-2. **RPI Mongo Bucket - Atlas Temp.json** - Light sensor visualization
-3. **Sensor Value Counts - Atlas.json** - Table panel example
+Check the [examples/](examples/) directory for:
+- `RPI MongoDB - Atlas.json` - Simple time-series dashboard
+- `RPI MongoDB Bucket - Atlas.json` - Using `$bucketAuto` for aggregation
+- `Sensor Value Counts - Atlas.json` - Table panel example
 
 ---
 
 ## Limitations and Notes
 
-### Current Limitations
-
-- **Read-only**: This plugin only supports querying (aggregation pipelines). It does not support writes or alerts that modify data.
-- **Aggregation-based**: All queries must be MongoDB aggregation pipelines. Simple find() queries are not supported.
-- **Time-series focus**: The plugin is optimized for time-series data with `ts`, `name`, and `value` fields.
-- **Proxy requirement**: Requires running a separate Node.js proxy server; direct connection to MongoDB from Grafana is not supported.
-
-### Query Macros
-
-The following macros are automatically expanded:
-
-| Macro | Description | Example Value |
-|-------|-------------|---------------|
-| `$from` | Start of time range | `ISODate("2024-01-01T00:00:00Z")` |
-| `$to` | End of time range | `ISODate("2024-01-01T23:59:59Z")` |
-| `$dateBucketCount` | Suggested bucket count | `100` |
-
-### Template Variables
-
-Template variables work like in other Grafana data sources. Define them in dashboard settings and reference with `$variableName` in queries.
-
-**Example template query to get unique hostnames:**
-```javascript
-db.metrics.aggregate([
-  { "$group": { "_id": "$hostname" } }
-])
-```
+- **Aggregation only**: This plugin uses MongoDB's aggregation framework. Direct find queries are not supported.
+- **Time-series format**: Output documents must have `name`, `value`, and `ts` fields for graph panels.
+- **Table panels**: Use `_id: 0` projection and return `name`, `value`, `ts` fields.
+- **Authentication**: Ensure the MongoDB user has read permissions on queried collections.
+- **Network**: The proxy server must have network access to MongoDB and be reachable by Grafana.
 
 ---
 
 ## Professional SRE/DevOps Services
 
-This fork is maintained by **run-as-daemon** – a team of experienced SRE/DevOps engineers specializing in monitoring, observability, and infrastructure automation.
+This fork is maintained by **[run-as-daemon.ru](https://run-as-daemon.ru)** – a team of SRE and DevOps engineers specializing in monitoring, observability, and database operations.
 
-**🌐 Website**: [run-as-daemon.ru](https://run-as-daemon.ru)
+### Available Services
 
-### Available Services:
+🔧 **MongoDB + Grafana Monitoring Stack Design & Deployment**  
+Complete setup of production-grade monitoring infrastructure with MongoDB as a data source, including HA configuration, security hardening, and custom dashboards.
 
-✅ **Grafana + MongoDB Monitoring Stack Design & Deployment**
-- End-to-end setup of production-ready monitoring infrastructure
-- Custom dashboard design and implementation
-- Best practices for data modeling and query optimization
+⚡ **MongoDB Performance Tuning & Index Optimization**  
+Expert analysis and optimization of MongoDB queries, aggregation pipelines, and indexes to ensure fast dashboard load times and efficient data retrieval.
 
-✅ **MongoDB Performance Tuning & Index Optimization**
-- Query performance analysis and optimization
-- Index strategy for time-series data
-- Scaling recommendations for high-volume metrics
+📊 **Production Dashboard & Alert Development**  
+Custom Grafana dashboards tailored to your business metrics, SLIs/SLOs, with intelligent alerting rules integrated with your incident management tools.
 
-✅ **Production Dashboard & Alert Development**
-- Professional dashboard design
-- Advanced aggregation pipeline development
-- Alert rules and notification integration
+🏗️ **High Availability & Backup Strategies for MongoDB**  
+Design and implementation of MongoDB replica sets, sharding strategies, automated backups, and disaster recovery procedures.
 
-✅ **High Availability & Backup Strategies**
-- MongoDB replica set configuration
-- Disaster recovery planning
-- Monitoring system resilience
+📈 **Observability Consulting & Training**  
+Team training on MongoDB monitoring best practices, query optimization, and Grafana dashboard development.
 
-✅ **Training & Consulting**
-- Team workshops on MongoDB + Grafana
-- Best practices for metrics collection
-- Custom integration development
-
-**Contact us** for a free consultation on your monitoring needs.
+**Contact us**: [run-as-daemon.ru](https://run-as-daemon.ru)  
+**Email**: contact@run-as-daemon.ru  
+**Telegram**: @run_as_daemon
 
 ---
 
 ## Support / Thanks
 
-If you find this plugin useful, please consider:
+If you find this plugin useful:
 
-⭐ **Star this repository** – It helps others discover the project
+- ⭐ **Star this repository** to show your support
+- 📢 **Share it** with colleagues who use Grafana + MongoDB
+- 💬 **Report issues** or request features via [GitHub Issues](https://github.com/ranas-mukminov/mongodb-grafana/issues)
+- 💝 **Sponsor**: Use the Sponsor button on GitHub or visit [run-as-daemon.ru/support](https://run-as-daemon.ru/support)
 
-📢 **Share with colleagues** – Spread the word about MongoDB + Grafana integration
-
-💖 **Sponsor the project** – Support ongoing maintenance and development via [GitHub Sponsors](https://github.com/sponsors/ranas-mukminov) or [run-as-daemon.ru/support](https://run-as-daemon.ru/support)
-
-🐛 **Report issues** – Help improve the plugin by reporting bugs and suggesting features
+Your support helps maintain this project and keep it compatible with the latest Grafana and MongoDB versions.
 
 ---
 
 ## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes (keeping compatibility with upstream)
+4. Submit a pull request
+
+See our [Contributing Guidelines](CONTRIBUTING.md) for more details.
+
+---
+
+## License
+
+ISC License
+
+Original work by James Osgood  
+Fork maintained by [run-as-daemon.ru](https://run-as-daemon.ru)
+
+---
+
+**Made with ❤️ by the MongoDB + Grafana community and [run-as-daemon.ru](https://run-as-daemon.ru)**
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 

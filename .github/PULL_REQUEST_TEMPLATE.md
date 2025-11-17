@@ -1,13 +1,6 @@
-# Pull Request
-
 ## Description
 
-<!-- Provide a brief description of the changes in this PR -->
-
-## Related Issue
-
-<!-- Link to the issue this PR addresses, if applicable -->
-Fixes #(issue number)
+<!-- Provide a clear and concise description of your changes -->
 
 ## Type of Change
 
@@ -17,121 +10,130 @@ Fixes #(issue number)
 - [ ] New feature (non-breaking change that adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] Documentation update
-- [ ] Code refactoring (no functional changes)
-- [ ] Performance improvement
 - [ ] Dependency update
+- [ ] Configuration/build change
+- [ ] Refactoring (no functional changes)
+
+## Related Issue
+
+<!-- Link to the related issue, if applicable -->
+Fixes #(issue number)
 
 ## Changes Made
 
-<!-- Provide a detailed list of changes -->
+<!-- Describe the changes you made in detail -->
 
 - 
 - 
 - 
 
-## Testing Done
+## Motivation and Context
 
-<!-- Describe the testing you've performed -->
+<!-- Why is this change required? What problem does it solve? -->
 
-### Manual Testing
+## How Has This Been Tested?
 
-- [ ] Tested with Grafana version(s): <!-- e.g., 9.5.2, 10.0.0 -->
-- [ ] Tested with MongoDB version(s): <!-- e.g., 5.0, 6.0 -->
-- [ ] Tested deployment method: <!-- e.g., manual, Docker Compose -->
+<!-- Describe the tests you ran to verify your changes -->
 
-### Test Scenarios
+- [ ] Manual testing in Grafana UI
+- [ ] Unit tests added/updated
+- [ ] Integration tests added/updated
+- [ ] Tested with MongoDB version(s): 
+- [ ] Tested with Grafana version(s): 
 
-<!-- Describe specific test scenarios you've run -->
-
-1. 
-2. 
-3. 
-
-### Expected Behavior
-
-<!-- What should happen? -->
-
-### Actual Behavior
-
-<!-- What actually happened? -->
+**Test Configuration**:
+- Node.js version:
+- MongoDB version:
+- Grafana version:
+- Operating System:
 
 ## Screenshots (if applicable)
 
-<!-- Add screenshots to demonstrate the changes -->
+<!-- Add screenshots to demonstrate UI changes or new features -->
 
 ## Checklist
 
 <!-- Mark completed items with an "x" -->
 
 ### Code Quality
-
-- [ ] My code follows the project's coding style
-- [ ] I have performed a self-review of my code
+- [ ] My code follows the style guidelines of this project
+- [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] My changes generate no new warnings or errors
+- [ ] I have checked for console errors in browser developer tools
 
 ### Testing
-
-- [ ] I have tested my changes locally
-- [ ] I have tested with multiple Grafana versions (if applicable)
-- [ ] I have tested with multiple MongoDB versions (if applicable)
-- [ ] I have added/updated tests that prove my fix is effective or that my feature works
+- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] New and existing unit tests pass locally with my changes
+- [ ] I have tested this change with a real MongoDB instance
+- [ ] I have tested this change in a real Grafana environment
 
 ### Documentation
-
-- [ ] I have updated the documentation (README.md, etc.) to reflect my changes
-- [ ] I have updated the examples if needed
-- [ ] I have added/updated code comments where necessary
+- [ ] I have updated the documentation accordingly (README, CHANGELOG, etc.)
+- [ ] I have added/updated JSDoc comments for new/modified functions
+- [ ] I have updated examples if needed
 
 ### Compatibility
+- [ ] My changes are backwards compatible with existing configurations
+- [ ] I have considered the impact on the upstream project (JamesOsgood/mongodb-grafana)
+- [ ] My changes don't break existing dashboards or queries
 
-- [ ] My changes are backward compatible
-- [ ] If breaking changes exist, I have documented them clearly
-- [ ] I have updated the version number if applicable
+### Build
+- [ ] `npm run build` completes successfully
+- [ ] `npm test` passes (if tests exist)
+- [ ] No new dependencies added, or they are justified and documented
 
-### Security
+## Dependencies
 
-- [ ] My changes do not introduce security vulnerabilities
-- [ ] I have not included sensitive data (credentials, API keys, etc.)
-- [ ] I have reviewed the security implications of my changes
+<!-- List any new dependencies added and why they are necessary -->
+
+- [ ] No new dependencies
+- [ ] New dependencies added (list below):
+  - 
 
 ## Breaking Changes
 
-<!-- If this PR introduces breaking changes, describe them here and provide migration instructions -->
+<!-- If this is a breaking change, describe the impact and migration path -->
 
-None / N/A
+- [ ] No breaking changes
+- [ ] Breaking changes (describe below):
+
+## Security Considerations
+
+<!-- Describe any security implications of this change -->
+
+- [ ] No security impact
+- [ ] Potential security impact (describe below):
+
+## Performance Impact
+
+<!-- Describe any performance implications of this change -->
+
+- [ ] No performance impact
+- [ ] Performance improvement
+- [ ] Potential performance regression (describe and justify below):
 
 ## Additional Notes
 
-<!-- Any additional information that reviewers should know -->
+<!-- Add any additional notes for reviewers -->
 
-## Review Requests
+## Reviewer Checklist
 
-<!-- Tag specific reviewers or request specific types of review -->
+<!-- For maintainers reviewing this PR -->
 
-- [ ] Code review
-- [ ] Security review
-- [ ] Documentation review
-- [ ] Performance review
+- [ ] Code follows project style and conventions
+- [ ] Changes are well documented
+- [ ] Tests are adequate and pass
+- [ ] No obvious security issues
+- [ ] No obvious performance issues
+- [ ] Documentation is updated
+- [ ] Commits are clean and well-formatted
+- [ ] PR is ready to merge
 
 ---
 
-## For Maintainers
+## Professional Support
 
-<!-- Maintainers will fill this section during review -->
+Need help with implementation or have questions about contributing?
 
-### Review Checklist
-
-- [ ] Code quality meets project standards
-- [ ] Tests are adequate and passing
-- [ ] Documentation is complete and accurate
-- [ ] No security concerns
-- [ ] Backward compatibility verified
-- [ ] Ready to merge
-
-### Post-Merge Tasks
-
-- [ ] Update CHANGELOG.md
-- [ ] Tag a new release (if applicable)
-- [ ] Update documentation site
-- [ ] Announce in discussions/social media
+Contact [run-as-daemon.ru](https://run-as-daemon.ru) for professional consulting and support services.

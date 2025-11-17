@@ -1,50 +1,63 @@
-// MongoDB initialization script
-// This script runs when the MongoDB container starts for the first time
+// Initialize MongoDB with sample data for testing
 
 db = db.getSiblingDB('testdb');
 
-// Create a collection for sample metrics
-db.createCollection('metrics');
+// Create a collection with sample sensor data
+db.sensor_data.insertMany([
+  {
+    sensor_type: "temperature",
+    host_name: "demo-host-1",
+    sensor_value: 22.5,
+    ts: new Date("2024-01-01T00:00:00Z")
+  },
+  {
+    sensor_type: "temperature",
+    host_name: "demo-host-1",
+    sensor_value: 23.1,
+    ts: new Date("2024-01-01T00:05:00Z")
+  },
+  {
+    sensor_type: "temperature",
+    host_name: "demo-host-1",
+    sensor_value: 23.8,
+    ts: new Date("2024-01-01T00:10:00Z")
+  },
+  {
+    sensor_type: "humidity",
+    host_name: "demo-host-1",
+    sensor_value: 45.2,
+    ts: new Date("2024-01-01T00:00:00Z")
+  },
+  {
+    sensor_type: "humidity",
+    host_name: "demo-host-1",
+    sensor_value: 46.5,
+    ts: new Date("2024-01-01T00:05:00Z")
+  },
+  {
+    sensor_type: "humidity",
+    host_name: "demo-host-1",
+    sensor_value: 47.1,
+    ts: new Date("2024-01-01T00:10:00Z")
+  }
+]);
 
-// Insert some sample time-series data
-const now = new Date();
-const samples = [];
+// Create index on timestamp field for better query performance
+db.sensor_data.createIndex({ ts: 1 });
+db.sensor_data.createIndex({ sensor_type: 1, host_name: 1, ts: 1 });
 
-// Generate sample data for the last hour (one point per minute)
-for (let i = 0; i < 60; i++) {
-  const timestamp = new Date(now.getTime() - (60 - i) * 60 * 1000);
-  
-  samples.push({
-    ts: timestamp,
-    hostname: 'server-01',
-    metric_name: 'cpu_usage',
-    value: Math.random() * 100,
-    tags: { datacenter: 'dc1', environment: 'production' }
-  });
-  
-  samples.push({
-    ts: timestamp,
-    hostname: 'server-02',
-    metric_name: 'cpu_usage',
-    value: Math.random() * 100,
-    tags: { datacenter: 'dc1', environment: 'production' }
-  });
-  
-  samples.push({
-    ts: timestamp,
-    hostname: 'server-01',
-    metric_name: 'memory_usage',
-    value: Math.random() * 16000,
-    tags: { datacenter: 'dc1', environment: 'production' }
-  });
-}
+// Create a read-only user for Grafana
+db.createUser({
+  user: "grafana_reader",
+  pwd: "grafana_password",
+  roles: [
+    {
+      role: "read",
+      db: "testdb"
+    }
+  ]
+});
 
-db.metrics.insertMany(samples);
-
-// Create indexes for better query performance
-db.metrics.createIndex({ ts: 1 });
-db.metrics.createIndex({ hostname: 1, ts: 1 });
-db.metrics.createIndex({ metric_name: 1, ts: 1 });
-
-print('Sample data loaded successfully!');
-print('Total documents inserted:', db.metrics.countDocuments());
+print("MongoDB initialization completed successfully!");
+print("Sample data inserted into testdb.sensor_data");
+print("Created user: grafana_reader");
