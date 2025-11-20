@@ -185,6 +185,36 @@ If you contribute to this project:
    - **Mitigation**: Use network segmentation
    - **Future**: Optional proxy authentication layer
 
+### Dependency Vulnerabilities (As of 2025-11-20)
+
+**Runtime Dependencies**: ✅ Updated to latest secure versions within compatibility constraints
+- express: 4.21.2 (latest 4.x)
+- body-parser: 1.20.3 (latest 1.x)
+- lodash: 4.17.21 (latest 4.x)
+- moment: 2.30.1 (latest 2.x)
+- mongodb: 3.7.4 (latest 3.x)
+
+**Development Dependencies**: ⚠️ 40 remaining vulnerabilities (dev-only)
+
+The remaining vulnerabilities are in development-only dependencies and **do not affect production runtime**:
+
+- **babel 6.x ecosystem** (30 critical/high): Used only for transpiling ES6 code during build. Not included in production bundles.
+- **mocha 5.x** (high): Used only for running tests during development
+- **jsdom 9.x** (moderate): Used only for test DOM simulation
+
+These dev dependencies cannot be easily upgraded without breaking changes:
+- Babel 6 → 7+ requires complete build configuration rewrite
+- Mocha 5 → 11 may require test syntax changes
+- jsdom 9 → 27 has breaking API changes
+
+**Risk Assessment**: Low - These vulnerabilities only affect development/build environment, not production runtime or deployed code.
+
+**Mitigation**:
+- Run builds in isolated/sandboxed environments
+- Do not process untrusted code during builds
+- Use CI/CD pipelines with restricted permissions
+- Runtime code has no dependency on vulnerable dev packages
+
 ## Security Updates
 
 Security updates are released as soon as possible after a vulnerability is confirmed.
@@ -209,5 +239,5 @@ We thank all security researchers who responsibly disclose vulnerabilities to he
 
 ---
 
-**Last updated**: 2024-01-01  
-**Version**: 1.0
+**Last updated**: 2025-11-20  
+**Version**: 1.1
