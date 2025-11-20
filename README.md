@@ -212,8 +212,6 @@ Fork maintained by [run-as-daemon.ru](https://run-as-daemon.ru)
 
 **Made with ❤️ by the MongoDB + Grafana community and [run-as-daemon.ru](https://run-as-daemon.ru)**
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
 ---
 
 ## License
